@@ -1,0 +1,24 @@
+version: '3.9'
+
+services:
+
+  redisdb:
+    image: redis:alpine
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - redisdb:/data
+
+  productdb:
+    image: mongo
+    volumes:
+      - mongo_data:/data/db
+
+  api.products:
+    image: ${DOCKER_REGISTRY-}apiproducts
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+volumes:
+  mongo_data:
+  redisdb:

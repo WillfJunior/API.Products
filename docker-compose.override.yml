@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+
+  redisdb:
+    container_name: redisdb
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdb:/data
+    
+
+  productdb:
+    container_name: productdb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      
+  api.products:
+    container_name: product.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://productDb:27017"
+      - "DatabaseSettings:DatabaseName=productDb"
+      - "DatabaseSettings:CollectionName=product"
+      - "DatabaseSettings:ConnectionRedis=redisdb:6379"
+
+    depends_on:
+      - productdb
+      - redisdb
+    ports:
+      - "8000:80"
+
+   
